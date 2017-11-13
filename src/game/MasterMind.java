@@ -1,4 +1,5 @@
 package game;
+import java.awt.*;
 import java.util.*;
 import javax.swing.*;
 
@@ -14,15 +15,18 @@ public class MasterMind {
 		rand=new Random();
 	}
 	
-	public int[] createArray(int length, int max)
+	public void createArray(int length, int max)
 	{
 		nums=new int[length];
 		for(int i=0; i<nums.length; i++)
 		{
 			nums[i]=rand.nextInt(max)+1;
 		}
-		
-		return nums;
+	}
+	
+	public int getArrayLength()
+	{
+		return nums.length;
 	}
 	
 	public boolean CheckGuess()
@@ -39,13 +43,40 @@ public class MasterMind {
 	
 	public void gameLevel()
 	{
-		final JComponent level=new JComponent()
+		JRadioButton easy=new JRadioButton("Easy");
+			easy.setActionCommand("easy");
+			easy.setSelected(true);
+		JRadioButton medium=new JRadioButton("Medium");
+			medium.setActionCommand("medium");
+		JRadioButton hard=new JRadioButton("Hard");
+			hard.setActionCommand("hard");
+		
+		final ButtonGroup group=new ButtonGroup();
+			group.add(easy);
+			group.add(medium);
+			group.add(hard);
+
+		final JPanel buttons=new JPanel();
+		buttons.add(new JLabel("Pick Level: "));
+			buttons.add(easy);
+			buttons.add(medium);
+			buttons.add(hard);
+			
+		//extra buttons
+		JOptionPane.showConfirmDialog(null, buttons);
+			
+		if(easy.isSelected())
 		{
-			ButtonGroup l=new ButtonGroup();
-			JRadioButton easy=new JRadioButton("Easy");
-			JRadioButton medium=new JRadioButton("Medium");
-			JRadioButton hard=new JRadioButton("Hard");	
-		};
+			createArray(3, 5);
+		}
+		else if(medium.isSelected())
+		{
+			createArray(4, 5);
+		}
+		else
+		{
+			createArray(5, 5);
+		}
 	}
 	
 	//input validation- input verifier?
@@ -125,17 +156,15 @@ public class MasterMind {
 	//play method that calls all methods so main dus not have to
 	public void play()
 	{
-		
+		gameLevel();
 	}
 	
 	public static void main(String[] args)
 	{
-		MasterMind newGame = new MasterMind();
-		newGame.createArray(3, 5);
-		newGame.guessArray(3);
+		MasterMind game=new MasterMind();
+		game.play();
+		game.guessArray(game.getArrayLength());
 		
-		
-		//new Mastermind.play();
 		System.exit(0);
 	}
 }
