@@ -62,8 +62,7 @@ public class MasterMind {
 			buttons.add(medium);
 			buttons.add(hard);
 			
-		//extra buttons
-		JOptionPane.showConfirmDialog(null, buttons);
+		JOptionPane.showConfirmDialog(null, buttons, "MasterMind", JOptionPane.PLAIN_MESSAGE);
 			
 		if(easy.isSelected())
 		{
