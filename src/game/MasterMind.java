@@ -1,44 +1,54 @@
 package game;
-import java.awt.*;
 import java.util.*;
 import javax.swing.*;
+import javax.swing.text.JTextComponent;
 
-public class MasterMind {
-
-	private Random rand;
+public class MasterMind 
+{
 	private int[] nums;
-	private JTextField[] guessString;
 	private int[] guessInt;
+	private String guesses;
 	
-	public MasterMind()
-	{
-		rand=new Random();
-	}
+	public MasterMind() {}
 	
 	public void createArray(int length, int max)
 	{
+		Random rand=new Random();
 		nums=new int[length];
 		for(int i=0; i<nums.length; i++)
 		{
 			nums[i]=rand.nextInt(max)+1;
-		}
+		}	
 	}
+	
 	
 	public int getArrayLength()
 	{
 		return nums.length;
 	}
 	
-	public boolean CheckGuess()
+	public boolean CheckGuess(int[] arr)
 	{
 		for(int i=0; i<nums.length; i++)
 		{
-			if(nums[i]!=guessInt[i])
+			if(nums[i]!=arr[i])
 			{
 				return false;
 			}
 		}
 		return true;
+	}
+	
+	public void result(boolean result)
+	{
+		if(result)
+		{
+			JOptionPane.showConfirmDialog(null, "You Win!", "MasterMind", JOptionPane.PLAIN_MESSAGE);
+		}
+		else
+		{
+			JOptionPane.showConfirmDialog(null, "Sorry, wrong answer", "MasterMind", JOptionPane.PLAIN_MESSAGE);
+		}
 	}
 	
 	public void gameLevel()
@@ -63,14 +73,14 @@ public class MasterMind {
 			buttons.add(hard);
 			
 		JOptionPane.showConfirmDialog(null, buttons, "MasterMind", JOptionPane.PLAIN_MESSAGE);
-			
+					
 		if(easy.isSelected())
 		{
 			createArray(3, 5);
 		}
 		else if(medium.isSelected())
 		{
-			createArray(4, 5);
+			createArray(4, 5);		
 		}
 		else
 		{
@@ -78,10 +88,9 @@ public class MasterMind {
 		}
 	}
 	
-	//input validation- input verifier?
 	public void guessArray(int length)
 	{
-		guessString=new JTextField[length];
+		JTextField[] guessString=new JTextField[length];
 		
 		for (int t = 0; t<guessString.length; t++) 
 		{
@@ -89,66 +98,91 @@ public class MasterMind {
 		 	guessString[t].setToolTipText("Enter guess here");
 		}
 		
-		switch (length){
-		case 3:
-			threeSpaces();
-			guessInt=stringToIntArr();
-			break;
-		case 4:
-			fourSpaces();
-			guessInt=stringToIntArr();
-			break;
-		case 5:
-			fiveSpaces();
-			guessInt=stringToIntArr();
-			break;
+		boolean validGuess;
+		switch(length)
+		{
+			case 3:
+				do {
+					threeSpaces(guessString);
+					validGuess=stringToIntArr(guessString);
+				}while(!validGuess);
+				break;
+			case 4:
+				do {
+					fourSpaces(guessString);
+					validGuess=stringToIntArr(guessString);
+				}while(!validGuess);
+				break;
+			case 5:
+				do {
+					fiveSpaces(guessString);
+					validGuess=stringToIntArr(guessString);	
+				}while(!validGuess);
+				break;
 		}
 	}
 	
-	public int[] stringToIntArr()
+	public boolean stringToIntArr(JTextField[] guessString)
 	{
 		guessInt=new int[guessString.length];
 		
 		for (int y = 0; y<guessInt.length; y++)
 		{
-			guessInt[y]=Integer.parseInt(guessString[y].getText());
+			try {
+				guessInt[y]=Integer.parseInt(guessString[y].getText());
+			}
+			catch(NumberFormatException f)
+			{
+				JOptionPane.showMessageDialog(null, "Invalid entry. Guess must be an integer from 1-5");
+				return false;
+			}
+			
+			if(guessInt[y]<1 || guessInt[y]>5)
+			{
+				JOptionPane.showMessageDialog(null, "Invalid entry. Guess must be an integer from 1-5");
+				return false;
+			}
 		}
 		
-		return guessInt;
+		return true;
 	}
 	
-	private void threeSpaces()
+	private void threeSpaces(JTextField[] guessString) 
 	{
 		final JComponent[] inputs = new JComponent[] { 
-				new JLabel("Place #1:"), guessString[0],
-				new JLabel("Place #2:"), guessString[1],
-				new JLabel("Place #3:"), guessString[2],
+//				new JText ("appendedString"),
+				new JLabel("Enter a guess from 1-5 into each slot: \n"),
+				new JLabel("#1:"), guessString[0],
+				new JLabel("#2:"), guessString[1],
+				new JLabel("#3:"), guessString[2],
 		};
+		
 		JOptionPane.showConfirmDialog(null, inputs, "MasterMind", JOptionPane.PLAIN_MESSAGE);
-	}
+	} 
 	
-	private void fourSpaces()
+	private void fourSpaces(JTextField[] guessString)
 	{
 		final JComponent[] inputs = new JComponent[] 
 				{
-				new JLabel ("Place #1:"), guessString[0],
-				new JLabel ("Place #2:"), guessString[1],
-				new JLabel ("Place #3:"), guessString[2],
-				new JLabel ("Place #4:"), guessString[3],
+				new JLabel ("#1:"), guessString[0],
+				new JLabel ("#2:"), guessString[1],
+				new JLabel ("#3:"), guessString[2],
+				new JLabel ("#4:"), guessString[3],
 		};
-		//int result =
+
 		JOptionPane.showConfirmDialog(null, inputs, "MasterMind", JOptionPane.PLAIN_MESSAGE);
 	}
 	
-	private void fiveSpaces()
+	private void fiveSpaces(JTextField[] guessString)
 	{
 		final JComponent[] inputs = new JComponent[] {
-				new JLabel ("Place #1:"), guessString[0],
-				new JLabel ("Place #2:"), guessString[1],
-				new JLabel ("Place #3:"), guessString[2],
-				new JLabel ("Place #4:"), guessString[3],
-				new JLabel ("Place #5:"), guessString[4],
+				new JLabel ("#1:"), guessString[0],
+				new JLabel ("#2:"), guessString[1],
+				new JLabel ("#3:"), guessString[2],
+				new JLabel ("#4:"), guessString[3],
+				new JLabel ("#5:"), guessString[4],
 		};
+		
 		JOptionPane.showConfirmDialog(null, inputs, "MasterMind", JOptionPane.PLAIN_MESSAGE);
 	}
 	
@@ -156,13 +190,13 @@ public class MasterMind {
 	public void play()
 	{
 		gameLevel();
+		guessArray(getArrayLength());
 	}
 	
 	public static void main(String[] args)
 	{
 		MasterMind game=new MasterMind();
 		game.play();
-		game.guessArray(game.getArrayLength());
 		
 		System.exit(0);
 	}
