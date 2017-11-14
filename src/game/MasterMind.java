@@ -5,13 +5,14 @@ import javax.swing.text.JTextComponent;
 
 public class MasterMind 
 {
-	private int[] nums;
+	protected int[] nums;
+	private String level;
 	private int[] guessInt;
 	private String guesses;
 	
 	public MasterMind() {}
 	
-	public void createArray(int length, int max)
+	protected void createArray(int length, int max)
 	{
 		Random rand=new Random();
 		nums=new int[length];
@@ -21,13 +22,12 @@ public class MasterMind
 		}	
 	}
 	
-	
-	public int getArrayLength()
+	protected int getArrayLength()
 	{
 		return nums.length;
 	}
 	
-	public boolean CheckGuess(int[] arr)
+	protected boolean CheckGuess(int[] arr)
 	{
 		for(int i=0; i<nums.length; i++)
 		{
@@ -39,7 +39,7 @@ public class MasterMind
 		return true;
 	}
 	
-	public void result(boolean result)
+	protected void result(boolean result)
 	{
 		if(result)
 		{
@@ -51,7 +51,7 @@ public class MasterMind
 		}
 	}
 	
-	public void gameLevel()
+	protected void gameLevel()
 	{
 		JRadioButton easy=new JRadioButton("Easy");
 			easy.setActionCommand("easy");
@@ -74,21 +74,10 @@ public class MasterMind
 			
 		JOptionPane.showConfirmDialog(null, buttons, "MasterMind", JOptionPane.PLAIN_MESSAGE);
 					
-		if(easy.isSelected())
-		{
-			createArray(3, 5);
-		}
-		else if(medium.isSelected())
-		{
-			createArray(4, 5);		
-		}
-		else
-		{
-			createArray(5, 5);
-		}
+		level=group.getSelection().getActionCommand();
 	}
 	
-	public void guessArray(int length)
+	protected void guessArray(int length)
 	{
 		JTextField[] guessString=new JTextField[length];
 		
@@ -122,7 +111,7 @@ public class MasterMind
 		}
 	}
 	
-	public boolean stringToIntArr(JTextField[] guessString)
+	protected boolean stringToIntArr(JTextField[] guessString)
 	{
 		guessInt=new int[guessString.length];
 		
@@ -190,6 +179,18 @@ public class MasterMind
 	public void play()
 	{
 		gameLevel();
+		if(level=="easy")
+		{
+			createArray(3, 5);
+		}
+		else if(level=="medium")
+		{
+			createArray(4, 5);		
+		}
+		else
+		{
+			createArray(5, 5);
+		}
 		guessArray(getArrayLength());
 	}
 	
