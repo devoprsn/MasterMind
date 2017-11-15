@@ -6,7 +6,6 @@ import javax.swing.text.JTextComponent;
 public class MasterMind 
 {
 	protected int[] nums;
-	private String level;
 	private int[] guessInt;
 	private String guesses;
 	
@@ -51,7 +50,7 @@ public class MasterMind
 		}
 	}
 	
-	protected void gameLevel()
+	protected String gameLevel()
 	{
 		JRadioButton easy=new JRadioButton("Easy");
 			easy.setActionCommand("easy");
@@ -74,7 +73,23 @@ public class MasterMind
 			
 		JOptionPane.showConfirmDialog(null, buttons, "MasterMind", JOptionPane.PLAIN_MESSAGE);
 					
-		level=group.getSelection().getActionCommand();
+		return group.getSelection().getActionCommand();
+	}
+	
+	protected void setLevel(String lev)
+	{
+		if(lev=="easy")
+		{
+			createArray(3, 5);
+		}
+		else if(lev=="medium")
+		{
+			createArray(4, 5);		
+		}
+		else
+		{
+			createArray(5, 5);
+		}
 	}
 	
 	protected void guessArray(int length)
@@ -178,19 +193,8 @@ public class MasterMind
 	//play method that calls all methods so main dus not have to
 	public void play()
 	{
-		gameLevel();
-		if(level=="easy")
-		{
-			createArray(3, 5);
-		}
-		else if(level=="medium")
-		{
-			createArray(4, 5);		
-		}
-		else
-		{
-			createArray(5, 5);
-		}
+		String level=gameLevel();
+		setLevel(level);
 		guessArray(getArrayLength());
 	}
 	

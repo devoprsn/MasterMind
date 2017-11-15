@@ -16,18 +16,23 @@ public class Tests {
 	@Test
 	public void GameLevelEasyCreatesArrayLengthThree()
 	{
-		
+		game.setLevel("easy");
+		assertEquals(3, game.getArrayLength());
 	}
 	
 	@Test
 	public void GameLevelMediumCreatesArrayLengthFour()
 	{
-		
+		game.setLevel("medium");
+		assertEquals(4, game.getArrayLength());
 	}
 	
 	@Test
 	public void GameLevelHardCreatesArrayLengthFive()
 	{
-		
+		game.setLevel("hard");
+		assertEquals(5, game.getArrayLength());
 	}
+	
+	
 }
