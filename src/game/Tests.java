@@ -34,5 +34,4 @@ public class Tests {
 		assertEquals(5, game.getArrayLength());
 	}
 	
-	
 }
