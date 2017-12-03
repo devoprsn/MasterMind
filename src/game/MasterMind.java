@@ -153,24 +153,7 @@ public class MasterMind
 		JOptionPane.showConfirmDialog(null, buttons, "MasterMind", JOptionPane.PLAIN_MESSAGE);
 					
 		return group.getSelection().getActionCommand();
-	}
-	
-//	protected void setLevel(String lev)
-//	{
-//		if(lev=="easy")
-//		{
-//			createArray(3, 5);
-//		}
-//		else if(lev=="medium")
-//		{
-//			createArray(4, 5);		
-//		}
-//		else
-//		{
-//			createArray(5, 5);
-//		}
-//	}
-	
+	}	
 	
 	protected String createTextField(String level)
 	{
@@ -233,10 +216,10 @@ public class MasterMind
 	{
 		int[] guessInt=new int[guessString.length()];
 		
-		for (int y = 0; y<guessInt.length; y++)
+		for (int y=0; y<guessInt.length; y++)
 		{
 			try {
-				guessInt[y]=Integer.parseInt(guessString, guessString.charAt(y));
+				guessInt[y]=Character.getNumericValue(guessString.charAt(y));
 			}
 			catch(NumberFormatException f)
 			{
@@ -256,70 +239,81 @@ public class MasterMind
 	
 	private String threeSpaces() 
 	{
-		JTextField[] guessString=new JTextField[3];
+		JTextField[] guessField=new JTextField[3];
 		
-		for (int t = 0; t<guessString.length; t++) 
+		for (int t = 0; t<guessField.length; t++) 
 		{
-		 	guessString[t] = new JTextField();
-		 	guessString[t].setToolTipText("Enter guess here");
+		 	guessField[t] = new JTextField();
+		 	guessField[t].setToolTipText("Enter guess here");
 		}
 		
 		final JComponent[] inputs = new JComponent[] { 
 //				new JLabel(guesses),
 				new JLabel("Enter a guess from 1-8 into each slot: \n"),
-				new JLabel("#1:"), guessString[0],
-				new JLabel("#2:"), guessString[1],
-				new JLabel("#3:"), guessString[2],
+				new JLabel("#1:"), guessField[0],
+				new JLabel("#2:"), guessField[1],
+				new JLabel("#3:"), guessField[2],
 		};
 		
 		JOptionPane.showConfirmDialog(null, inputs, "MasterMind", JOptionPane.PLAIN_MESSAGE);
-		return guessString.toString(); 
+		return textFieldToString(guessField); 
 	} 
+	
+	private String textFieldToString(JTextField[] field)
+	{
+		String s=field[0].getText();
+		for(int i=1; i<field.length; i++)
+		{
+			s+=field[i].getText();
+		}
+		
+		return s;
+	}
 	
 	private String fourSpaces()
 	{
-		JTextField[] guessString=new JTextField[4];
+		JTextField[] guessField=new JTextField[4];
 		
-		for (int t = 0; t<guessString.length; t++) 
+		for (int t = 0; t<guessField.length; t++) 
 		{
-		 	guessString[t] = new JTextField();
-		 	guessString[t].setToolTipText("Enter guess here");
+		 	guessField[t] = new JTextField();
+		 	guessField[t].setToolTipText("Enter guess here");
 		}
 		
 		final JComponent[] inputs = new JComponent[] {
 				new JLabel("Enter a guess from 1-8 into each slot: \n"),
-				new JLabel ("#1:"), guessString[0],
-				new JLabel ("#2:"), guessString[1],
-				new JLabel ("#3:"), guessString[2],
-				new JLabel ("#4:"), guessString[3],
+				new JLabel ("#1:"), guessField[0],
+				new JLabel ("#2:"), guessField[1],
+				new JLabel ("#3:"), guessField[2],
+				new JLabel ("#4:"), guessField[3],
 		};
 
 		JOptionPane.showConfirmDialog(null, inputs, "MasterMind", JOptionPane.PLAIN_MESSAGE);
-		return guessString.toString();
+		return textFieldToString(guessField);
 	}
 	
 	private String fiveSpaces()
 	{
-		JTextField[] guessString=new JTextField[5];
+		JTextField[] guessField=new JTextField[5];
 		
-		for (int t = 0; t<guessString.length; t++) 
+		for (int t = 0; t<guessField.length; t++) 
 		{
-		 	guessString[t] = new JTextField();
-		 	guessString[t].setToolTipText("Enter guess here");
+		 	guessField[t] = new JTextField();
+		 	guessField[t].setToolTipText("Enter guess here");
 		}
 		final JComponent[] inputs = new JComponent[] {
 				new JLabel("Enter a guess from 1-8 into each slot: \n"),
-				new JLabel ("#1:"), guessString[0],
-				new JLabel ("#2:"), guessString[1],
-				new JLabel ("#3:"), guessString[2],
-				new JLabel ("#4:"), guessString[3],
-				new JLabel ("#5:"), guessString[4],
+				new JLabel ("#1:"), guessField[0],
+				new JLabel ("#2:"), guessField[1],
+				new JLabel ("#3:"), guessField[2],
+				new JLabel ("#4:"), guessField[3],
+				new JLabel ("#5:"), guessField[4],
 		};
 		
 		
 		
 		JOptionPane.showConfirmDialog(null, inputs, "MasterMind", JOptionPane.PLAIN_MESSAGE);
-		return guessString.toString();
+		return textFieldToString(guessField);
 	}
 	
 	//play method that calls all methods so main dus not have to
@@ -333,7 +327,7 @@ public class MasterMind
 		while(!win && tries<6)
 		{
 			tries++;
-			createTextField(level);
+			guessInt=getUserInput(level);
 //			int[] results=checkGuess(guessInt);
 //			win=result(results);		
 		}
