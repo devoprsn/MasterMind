@@ -8,7 +8,6 @@ public class MasterMind
 {
 	private IRandomValueGenerator rand;
 	private int[] answer;
-	private int[] guessInt;
 	private String guesses;
 	
 	public MasterMind(IRandomValueGenerator rand)
@@ -37,59 +36,68 @@ public class MasterMind
 		return answer;
 	}
 	
-//	protected int[] checkGuess(int[] guessInt)
-//	{
-//		int[] copyNums=new int[guessInt.length];
-//		int[] results = {0, 0}; //results[0] holds number of right number in the right place and
-//								//results[1] holds number of right numbers in the wrong place
-//		for(int i=0; i<answer.length; i++)
-//		{
-//			copyNums[i]=answer[i];
-//		}
-//		
-//		for(int i=0; i<copyNums.length; i++)
-//		{
-//			if(copyNums[i]==guessInt[i])
-//			{
-//				results[0]++;
-//				copyNums[i]=0;
-//			}
-//		}
-//		
-//		for(int i=0; i<guessInt.length; i++)
-//		{
-//			for(int j=0; j<copyNums.length; j++)
-//			{
-//				if(guessInt[i]==copyNums[j])
-//				{
-//					results[1]++;
-//					copyNums[j]=0;
-//					break;
-//				}
-//			}
-//		}
-//		
-//		return results;
-//	}
-	
-	protected boolean result(int[] results) throws IOException, LineUnavailableException
+	protected boolean checkGuess(int[] guessInt)
 	{
-		int length = guessInt.length;
-		
-		if(results[0] == length)
+
+		for(int i=0; i<guessInt.length; i++)
 		{
-			JOptionPane.showConfirmDialog(null, "You Win!", "MasterMind", JOptionPane.PLAIN_MESSAGE);
-			playAudio();
-			return true;
+			if(guessInt[i]!=answer[i])
+			{
+				return false;
+			}
 		}
-		else
+		
+		return true;
+	}
+	
+	protected void checkHowMany(int[] guessInt)
+	{
+		int same=0, wrongPlace=0;
+		
+		int[] copyNums=new int[guessInt.length];
+		int[] results = {0, 0}; //results[0] holds number of right number in the right place and
+								//results[1] holds number of right numbers in the wrong place
+		for(int i=0; i<answer.length; i++)
 		{
+			copyNums[i]=answer[i];
+		}
+		
+		for(int i=0; i<copyNums.length; i++)
+		{
+			if(copyNums[i]==guessInt[i])
+			{
+				same++;
+			}
+		}
+		
+		for(int i=0; i<guessInt.length; i++)
+		{
+			for(int j=0; j<copyNums.length; j++)
+			{
+				if(guessInt[i]==copyNums[j])
+				{
+					results[1]++;
+					copyNums[j]=0;
+					break;
+				}
+			}
+		}
+		
+	}
+	
+	protected void result(int[] results) 
+	{		
 			JOptionPane.showConfirmDialog(null, 
 					"Right number, right place: " + results[0] +
 					"\nRight number, wrong place: "  + results[1], 
 					"MasterMind", JOptionPane.PLAIN_MESSAGE);
-			return false;
-		}
+	}
+	
+	protected boolean displayWin() throws IOException, LineUnavailableException
+	{
+		JOptionPane.showConfirmDialog(null, "You Win!", "MasterMind", JOptionPane.PLAIN_MESSAGE);
+		playAudio();
+		return true;
 	}
 	
 	private void playAudio() throws IOException, LineUnavailableException
@@ -327,9 +335,12 @@ public class MasterMind
 		while(!win && tries<6)
 		{
 			tries++;
-			guessInt=getUserInput(level);
-//			int[] results=checkGuess(guessInt);
-//			win=result(results);		
+			int[] guessInt=getUserInput(level);
+			win=checkGuess(guessInt);
+			if(win)
+			{
+				displayWin();
+			}
 		}
 	}
 	
