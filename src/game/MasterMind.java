@@ -1,5 +1,4 @@
 package game;
-import java.util.*;
 import javax.swing.*;
 import javax.sound.sampled.*;
 import java.io.*;
@@ -13,7 +12,7 @@ public class MasterMind
 	public MasterMind(IRandomValueGenerator rand)
 	{
 		this.rand=rand;
-		guesses="Previous Guesses:";
+		guesses="Previous guesses:\n";
 	}
 	
 	protected int[] createArray(String lev)
@@ -50,23 +49,22 @@ public class MasterMind
 		return true;
 	}
 	
-	protected void checkHowMany(int[] guessInt)
-	{
-		int same=0, wrongPlace=0;
-		
+	protected int[] checkHowMany(int[] guessInt)
+	{		
 		int[] copyNums=new int[guessInt.length];
 		int[] results = {0, 0}; //results[0] holds number of right number in the right place and
 								//results[1] holds number of right numbers in the wrong place
 		for(int i=0; i<answer.length; i++)
 		{
 			copyNums[i]=answer[i];
-		}
-		
+		}		
+
 		for(int i=0; i<copyNums.length; i++)
 		{
 			if(copyNums[i]==guessInt[i])
 			{
-				same++;
+				results[0]++;
+				copyNums[i]=0;
 			}
 		}
 		
@@ -83,21 +81,35 @@ public class MasterMind
 			}
 		}
 		
+		return results;	
 	}
 	
-	protected void result(int[] results) 
+	protected void result(boolean win) throws IOException, LineUnavailableException
 	{		
-			JOptionPane.showConfirmDialog(null, 
-					"Right number, right place: " + results[0] +
-					"\nRight number, wrong place: "  + results[1], 
-					"MasterMind", JOptionPane.PLAIN_MESSAGE);
+//			JOptionPane.showConfirmDialog(null, 
+//					"Right number, right place: " +
+//					"\nRight number, wrong place: ", 
+//					"MasterMind", JOptionPane.PLAIN_MESSAGE);
+		
+		if(win)
+		{
+			displayWin();
+		}
+		else
+		{
+			displayLoss();
+		}
 	}
 	
-	protected boolean displayWin() throws IOException, LineUnavailableException
+	private void displayLoss()
+	{
+		JOptionPane.showConfirmDialog(null, "Sorry, Wrong answer.", "MasterMind", JOptionPane.PLAIN_MESSAGE);
+	}
+	
+	private void displayWin() throws IOException, LineUnavailableException
 	{
 		JOptionPane.showConfirmDialog(null, "You Win!", "MasterMind", JOptionPane.PLAIN_MESSAGE);
 		playAudio();
-		return true;
 	}
 	
 	private void playAudio() throws IOException, LineUnavailableException
@@ -173,7 +185,7 @@ public class MasterMind
 				guessString=threeSpaces();	
 				break;
 			case "medium":
-					guessString=fourSpaces();
+				guessString=fourSpaces();
 				break;
 			case "hard":
 				guessString=fiveSpaces();
@@ -197,11 +209,13 @@ public class MasterMind
 			}
 			catch(InvalidEntryException i)
 			{
+				JOptionPane.showMessageDialog(null, "Invalid entry. Guess must be an integer from 1-9");
 				validGuess=false;
 			}
 			
 		}while(!validGuess);
 		
+		guesses+=(guessString+"\n");
 		return guess;
 	}
 	
@@ -222,22 +236,31 @@ public class MasterMind
 	
 	protected int[] stringToIntArr(String guessString)
 	{
+		if(guessString.length()==0)
+		{
+			throw new InvalidEntryException();
+		}
 		int[] guessInt=new int[guessString.length()];
 		
 		for (int y=0; y<guessInt.length; y++)
 		{
 			try {
-				guessInt[y]=Character.getNumericValue(guessString.charAt(y));
+				if(Character.isDigit(guessString.charAt(y)))
+				{
+					guessInt[y]=Character.getNumericValue(guessString.charAt(y));
+				}
+				else
+				{
+					throw new InvalidEntryException();
+				}
 			}
 			catch(NumberFormatException f)
 			{
-				JOptionPane.showMessageDialog(null, "Invalid entry. Guess must be an integer from 1-8");
 				throw new InvalidEntryException();
 			}
-			
-			if(guessInt[y]<1 || guessInt[y]>8)
+
+			if(guessInt[y]<1)
 			{
-				JOptionPane.showMessageDialog(null, "Invalid entry. Guess must be an integer from 1-8");
 				throw new InvalidEntryException();
 			}
 		}
@@ -256,8 +279,8 @@ public class MasterMind
 		}
 		
 		final JComponent[] inputs = new JComponent[] { 
-//				new JLabel(guesses),
-				new JLabel("Enter a guess from 1-8 into each slot: \n"),
+				//previous guesses
+				new JLabel("Enter a guess from 1-9 into each slot: \n"),
 				new JLabel("#1:"), guessField[0],
 				new JLabel("#2:"), guessField[1],
 				new JLabel("#3:"), guessField[2],
@@ -267,14 +290,15 @@ public class MasterMind
 		return textFieldToString(guessField); 
 	} 
 	
-	private String textFieldToString(JTextField[] field)
+	private String textFieldToString(JTextField[] field) 
 	{
 		String s=field[0].getText();
 		for(int i=1; i<field.length; i++)
 		{
+			
 			s+=field[i].getText();
 		}
-		
+	
 		return s;
 	}
 	
@@ -289,7 +313,7 @@ public class MasterMind
 		}
 		
 		final JComponent[] inputs = new JComponent[] {
-				new JLabel("Enter a guess from 1-8 into each slot: \n"),
+				new JLabel("Enter a guess from 1-9 into each slot: \n"),
 				new JLabel ("#1:"), guessField[0],
 				new JLabel ("#2:"), guessField[1],
 				new JLabel ("#3:"), guessField[2],
@@ -310,7 +334,7 @@ public class MasterMind
 		 	guessField[t].setToolTipText("Enter guess here");
 		}
 		final JComponent[] inputs = new JComponent[] {
-				new JLabel("Enter a guess from 1-8 into each slot: \n"),
+				new JLabel("Enter a guess from 1-9 into each slot: \n"),
 				new JLabel ("#1:"), guessField[0],
 				new JLabel ("#2:"), guessField[1],
 				new JLabel ("#3:"), guessField[2],
@@ -327,7 +351,6 @@ public class MasterMind
 	//play method that calls all methods so main dus not have to
 	public void play() throws IOException, LineUnavailableException
 	{
-		int[] nums;
 		String level=gameLevel();
 		createArray(level);
 			boolean win=false;
@@ -337,10 +360,7 @@ public class MasterMind
 			tries++;
 			int[] guessInt=getUserInput(level);
 			win=checkGuess(guessInt);
-			if(win)
-			{
-				displayWin();
-			}
+			result(win);
 		}
 	}
 	

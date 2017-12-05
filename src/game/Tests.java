@@ -32,12 +32,6 @@ public class Tests {
 	}
 	
 	@Test (expected=InvalidEntryException.class)
-	public void InvalidGuessNumberThrowsException()
-	{
-		game.stringToIntArr("1942");
-	}
-	
-	@Test (expected=InvalidEntryException.class)
 	public void InvalidGuessCharacterThrowsException()
 	{
 		game.stringToIntArr("abcd");
@@ -59,7 +53,7 @@ public class Tests {
 		int[] guess={3,2,1};
 		rand.setNums(nums);
 		game.createArray("easy");
-		assert(game.checkGuess(guess));
+		assertFalse(game.checkGuess(guess));
 	}
 		
 //	@Test
