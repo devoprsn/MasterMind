@@ -5,6 +5,7 @@ import java.io.*;
 
 public class MasterMind 
 {
+	//so we can pass in a mock object to test the arrays
 	private IRandomValueGenerator rand;
 	private int[] answer;
 	private String guesses;
@@ -15,14 +16,14 @@ public class MasterMind
 		guesses="Previous guesses:\n";
 	}
 	
-	protected int[] createArray(String lev)
+	protected int[] createArray(String level)
 	{
 		int length;
-		if(lev=="easy")
+		if(level=="easy")
 		{
 			length=3;
 		}
-		else if(lev=="medium")
+		else if(level=="medium")
 		{
 			length=4;
 		}
@@ -49,11 +50,27 @@ public class MasterMind
 		return true;
 	}
 	
-	protected int[] checkHowMany(int[] guessInt)
+	
+	protected int checkHowManyCorrect(int[] guessInt)
+	{
+		int total=0;	
+		for(int i=0; i<guessInt.length; i++)
+		{
+			if(guessInt[i]==answer[i])
+			{
+				total++;
+			}
+		}
+		
+		return total;
+	}
+	
+	
+	protected String checkHowMany(int[] guessInt)
 	{		
 		int[] copyNums=new int[guessInt.length];
-		int[] results = {0, 0}; //results[0] holds number of right number in the right place and
-								//results[1] holds number of right numbers in the wrong place
+		int rightNumRightPlace=0, rightNumWrongPlace=0;
+
 		for(int i=0; i<answer.length; i++)
 		{
 			copyNums[i]=answer[i];
@@ -63,7 +80,7 @@ public class MasterMind
 		{
 			if(copyNums[i]==guessInt[i])
 			{
-				results[0]++;
+				rightNumRightPlace++;
 				copyNums[i]=0;
 			}
 		}
@@ -74,54 +91,53 @@ public class MasterMind
 			{
 				if(guessInt[i]==copyNums[j])
 				{
-					results[1]++;
+					rightNumWrongPlace++;
 					copyNums[j]=0;
-					break;
 				}
 			}
 		}
 		
-		return results;	
+		StringBuilder s=new StringBuilder("Right Number Right Place: "+rightNumRightPlace
+				+"\nRight Number Wrong Place: "+rightNumWrongPlace);
+		return s.toString();	
 	}
-	
-	protected void result(boolean win) throws IOException, LineUnavailableException
-	{		
-//			JOptionPane.showConfirmDialog(null, 
-//					"Right number, right place: " +
-//					"\nRight number, wrong place: ", 
-//					"MasterMind", JOptionPane.PLAIN_MESSAGE);
-		
+
+	protected void result(boolean win, int[] guessInt) throws IOException, LineUnavailableException
+	{				
 		if(win)
 		{
 			displayWin();
 		}
 		else
 		{
-			displayLoss();
+			displayLoss(checkHowManyCorrect(guessInt));
 		}
 	}
 	
-	private void displayLoss()
-	{
-		JOptionPane.showConfirmDialog(null, "Sorry, Wrong answer.", "MasterMind", JOptionPane.PLAIN_MESSAGE);
+	private void displayLoss(int correct) throws IOException, LineUnavailableException
+	{		
+		playAudio("missed.wav");
+		JOptionPane.showConfirmDialog(null, "Sorry, wrong answer.\nYou got "+correct+" correct numbers.", 
+				"MasterMind", JOptionPane.PLAIN_MESSAGE);
+		
 	}
 	
 	private void displayWin() throws IOException, LineUnavailableException
 	{
-		JOptionPane.showConfirmDialog(null, "You Win!", "MasterMind", JOptionPane.PLAIN_MESSAGE);
-		playAudio();
+		playAudio("applause.wav");
+		JOptionPane.showConfirmDialog(null, "You Win!", "MasterMind", JOptionPane.PLAIN_MESSAGE);		
 	}
 	
-	private void playAudio() throws IOException, LineUnavailableException
+	private void playAudio(String filename) throws IOException, LineUnavailableException
 	{
 		File soundFile;
-		AudioInputStream audioIn;
+		AudioInputStream stream;
 		SourceDataLine soundLine = null;
 		int BUFFER_SIZE = 64*1024; 
 		try {
-			soundFile = new File("applause.wav");	
-			audioIn = AudioSystem.getAudioInputStream(soundFile);
-			AudioFormat audioFormat = audioIn.getFormat();
+			soundFile = new File(filename);	
+			stream = AudioSystem.getAudioInputStream(soundFile);
+			AudioFormat audioFormat = stream.getFormat();
 	        DataLine.Info info = new DataLine.Info(SourceDataLine.class, audioFormat);
 	        soundLine = (SourceDataLine) AudioSystem.getLine(info);
 	        soundLine.open(audioFormat);
@@ -130,12 +146,12 @@ public class MasterMind
 	        byte[] sampledData = new byte[BUFFER_SIZE];
 	        while (nBytesRead != -1) 
 	        {
-	           nBytesRead = audioIn.read(sampledData, 0, sampledData.length);
+	           nBytesRead = stream.read(sampledData, 0, sampledData.length);
 	           if (nBytesRead >= 0) 
 	           {
 	              soundLine.write(sampledData, 0, nBytesRead);
-	            }
-	         }
+	           }
+	        }
 		}
 		catch(UnsupportedAudioFileException e)
 		{
@@ -146,7 +162,6 @@ public class MasterMind
 		{
 			System.err.println("File not found");
 		}
-
 	}
 	
 	protected String gameLevel()
@@ -179,17 +194,23 @@ public class MasterMind
 	{
 		String guessString=null;
 		
-		switch(level)
+		try {
+			switch(level)
+			{
+				case "easy":
+					guessString=threeSpaces();	
+					break;
+				case "medium":
+					guessString=fourSpaces();
+					break;
+				case "hard":
+					guessString=fiveSpaces();
+					break;
+			}
+		}
+		catch(InvalidEntryException i)
 		{
-			case "easy":
-				guessString=threeSpaces();	
-				break;
-			case "medium":
-				guessString=fourSpaces();
-				break;
-			case "hard":
-				guessString=fiveSpaces();
-				break;
+			throw new InvalidEntryException();
 		}
 		
 		return guessString;
@@ -197,13 +218,13 @@ public class MasterMind
 	
 	protected int[] getUserInput(String level)
 	{
-		int[] guess=createGuessArray(level);
+		int[] guess=null;
 		String guessString=null;
 		boolean validGuess=false;
 		
-		do{
-			guessString=createTextField(level);
+		do{		
 			try {
+				guessString=createTextField(level);
 				guess=stringToIntArr(guessString);
 				validGuess=true;
 			}
@@ -217,21 +238,6 @@ public class MasterMind
 		
 		guesses+=(guessString+"\n");
 		return guess;
-	}
-	
-	private int[] createGuessArray(String level)
-	{
-		switch(level)
-		{
-		case "easy":
-			return new int[3];
-		case "medium":
-				return new int[4];
-		case "hard":
-			return new int[5];
-		default:
-			return null;
-		}		
 	}
 	
 	protected int[] stringToIntArr(String guessString)
@@ -270,7 +276,8 @@ public class MasterMind
 	
 	private String threeSpaces() 
 	{
-		JTextField[] guessField=new JTextField[3];
+		int len=3;
+		JTextField[] guessField=new JTextField[len];
 		
 		for (int t = 0; t<guessField.length; t++) 
 		{
@@ -287,24 +294,35 @@ public class MasterMind
 		};
 		
 		JOptionPane.showConfirmDialog(null, inputs, "MasterMind", JOptionPane.PLAIN_MESSAGE);
-		return textFieldToString(guessField); 
+
+		try {
+			return textFieldToString(guessField, len);
+		}
+		catch(InvalidEntryException i)
+		{
+			throw new InvalidEntryException();
+		}
 	} 
 	
-	private String textFieldToString(JTextField[] field) 
+	private String textFieldToString(JTextField[] field, int len) 
 	{
 		String s=field[0].getText();
 		for(int i=1; i<field.length; i++)
-		{
-			
+		{		
 			s+=field[i].getText();
 		}
 	
+		if(s.length()!=len)
+		{
+			throw new InvalidEntryException();
+		}
 		return s;
 	}
 	
 	private String fourSpaces()
 	{
-		JTextField[] guessField=new JTextField[4];
+		int len=4;
+		JTextField[] guessField=new JTextField[len];
 		
 		for (int t = 0; t<guessField.length; t++) 
 		{
@@ -321,12 +339,19 @@ public class MasterMind
 		};
 
 		JOptionPane.showConfirmDialog(null, inputs, "MasterMind", JOptionPane.PLAIN_MESSAGE);
-		return textFieldToString(guessField);
+		try {
+			return textFieldToString(guessField, len);
+		}
+		catch(InvalidEntryException i)
+		{
+			throw new InvalidEntryException();
+		}
 	}
 	
 	private String fiveSpaces()
 	{
-		JTextField[] guessField=new JTextField[5];
+		int len=5;
+		JTextField[] guessField=new JTextField[len];
 		
 		for (int t = 0; t<guessField.length; t++) 
 		{
@@ -345,23 +370,41 @@ public class MasterMind
 		
 		
 		JOptionPane.showConfirmDialog(null, inputs, "MasterMind", JOptionPane.PLAIN_MESSAGE);
-		return textFieldToString(guessField);
+		try {
+			return textFieldToString(guessField, len);
+		}
+		catch(InvalidEntryException i)
+		{
+			throw new InvalidEntryException();
+		}
 	}
 	
 	//play method that calls all methods so main dus not have to
 	public void play() throws IOException, LineUnavailableException
 	{
-		String level=gameLevel();
-		createArray(level);
-			boolean win=false;
-			int tries=0;
-		while(!win && tries<6)
+		int x;
+		do
 		{
-			tries++;
-			int[] guessInt=getUserInput(level);
-			win=checkGuess(guessInt);
-			result(win);
-		}
+			String level=gameLevel();
+			createArray(level);
+				boolean win=false;
+				int tries=0;
+			while(!win && tries<=10)
+			{
+				tries++;
+				int[] guessInt=getUserInput(level);
+				win=checkGuess(guessInt);
+				result(win, guessInt);
+			}
+			
+			if(tries==11)
+			{
+//				playAudio("game-over");
+				JOptionPane.showMessageDialog(null, "Game over");
+			}
+			x=JOptionPane.showConfirmDialog(null, "Would you like to play again?", "MasterMind", JOptionPane.YES_OPTION);
+		}while(x==0);
+			
 	}
 	
 	public static void main(String[] args) throws IOException, LineUnavailableException

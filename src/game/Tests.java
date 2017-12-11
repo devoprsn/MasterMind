@@ -54,14 +54,38 @@ public class Tests {
 		rand.setNums(nums);
 		game.createArray("easy");
 		assertFalse(game.checkGuess(guess));
+	}	
+	
+	@Test
+	public void ValidGuessStringReturnsIntArrayRepresentation()
+	{
+		int[] nums={1, 2, 3, 4};
+		int[] returnedArray=game.stringToIntArr("1234");
+		for(int i=0; i<nums.length; i++)
+		{
+			assertEquals(nums[i], returnedArray[i]);
+		}
 	}
-		
-//	@Test
-//	public void ValidGuessStringReturnsIntArray()
-//	{
-//		int[] nums={1, 2, 3, 4};
-//		assertEquals(nums, game.stringToIntArr("1234"));
-//	}
 
+	@Test
+	public void checkGuessReturnsTrueIfGuessEqualsAnswer()
+	{
+		rand.initializeArray(4);		
+		int[] guess={1, 2, 3, 4};
+		rand.setNums(guess);
+		game.createArray("medium");
+		assertTrue(game.checkGuess(guess));		
+	}
+	
+	@Test
+	public void checkGuessReturnsFalseIfGuessDoesNotEqualsAnswer()
+	{
+		rand.initializeArray(4);		
+		int[] nums={1, 2, 3, 4};
+		rand.setNums(nums);
+		game.createArray("medium");
+		int[] guess={6, 7, 8, 9};
+		assertFalse(game.checkGuess(guess));
+	}
 }
 	
