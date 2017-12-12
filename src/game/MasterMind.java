@@ -66,40 +66,11 @@ public class MasterMind
 	}
 	
 	
-	protected String checkHowMany(int[] guessInt)
+	protected int howManyWrongPlace(int[] guessInt)
 	{		
-		int[] copyNums=new int[guessInt.length];
-		int rightNumRightPlace=0, rightNumWrongPlace=0;
+		int wrongPlace=0;
 
-		for(int i=0; i<answer.length; i++)
-		{
-			copyNums[i]=answer[i];
-		}		
-
-		for(int i=0; i<copyNums.length; i++)
-		{
-			if(copyNums[i]==guessInt[i])
-			{
-				rightNumRightPlace++;
-				copyNums[i]=0;
-			}
-		}
-		
-		for(int i=0; i<guessInt.length; i++)
-		{
-			for(int j=0; j<copyNums.length; j++)
-			{
-				if(guessInt[i]==copyNums[j])
-				{
-					rightNumWrongPlace++;
-					copyNums[j]=0;
-				}
-			}
-		}
-		
-		StringBuilder s=new StringBuilder("Right Number Right Place: "+rightNumRightPlace
-				+"\nRight Number Wrong Place: "+rightNumWrongPlace);
-		return s.toString();	
+		return wrongPlace;	
 	}
 
 	protected void result(boolean win, int[] guessInt) throws IOException, LineUnavailableException
@@ -110,15 +81,16 @@ public class MasterMind
 		}
 		else
 		{
-			displayLoss(checkHowManyCorrect(guessInt));
+			displayLoss(checkHowManyCorrect(guessInt), howManyWrongPlace(guessInt));
 		}
 	}
 	
-	private void displayLoss(int correct) throws IOException, LineUnavailableException
+	private void displayLoss(int correct, int wrongPlace) throws IOException, LineUnavailableException
 	{		
+		StringBuilder msg=new StringBuilder("Right Number Right Place: "+correct
+				+"\nRight Number Wrong Place: "+wrongPlace);
 		playAudio("missed.wav");
-		JOptionPane.showConfirmDialog(null, "Sorry, wrong answer.\nYou got "+correct+" correct numbers.", 
-				"MasterMind", JOptionPane.PLAIN_MESSAGE);
+		JOptionPane.showMessageDialog(null, msg, "MasterMind", JOptionPane.PLAIN_MESSAGE);
 		
 	}
 	
@@ -162,6 +134,20 @@ public class MasterMind
 		{
 			System.err.println("File not found");
 		}
+		
+//		File file=new File(filename);
+//		AudioInputStream stream;
+//		AudioFormat format;
+//		DataLine.Info info;
+//		Clip clip;
+//		try {
+//			    stream = AudioSystem.getAudioInputStream(file);
+//			    format = stream.getFormat();
+//			    info = new DataLine.Info(Clip.class, format);
+//			    clip = (Clip) AudioSystem.getLine(info);
+//			    clip.open(stream);
+//			    clip.start();
+//		}
 	}
 	
 	protected String gameLevel()

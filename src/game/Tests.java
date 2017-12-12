@@ -87,5 +87,27 @@ public class Tests {
 		int[] guess={6, 7, 8, 9};
 		assertFalse(game.checkGuess(guess));
 	}
+	
+	@Test
+	public void checkHowManyCorrectReturnsCorrectAnswer()
+	{
+		rand.initializeArray(4);		
+		int[] nums={1, 2, 3, 4};
+		rand.setNums(nums);
+		game.createArray("medium");
+		int[] guess={1, 7, 3, 9};
+		assertEquals(2, game.checkHowManyCorrect(guess));
+	}
+	
+	@Test
+	public void HowManyWrongPlaceReturnsCorrectAnswer()
+	{
+		rand.initializeArray(4);		
+		int[] nums={1, 2, 3, 4};
+		rand.setNums(nums);
+		game.createArray("medium");
+		int[] guess={7, 4, 3, 1};
+		assertEquals(2, game.howManyWrongPlace(guess));
+	}
 }
 	
