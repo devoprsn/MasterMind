@@ -96,7 +96,7 @@ public class Tests {
 		rand.setNums(nums);
 		game.createArray("medium");
 		int[] guess={1, 7, 3, 9};
-		assertEquals(2, game.checkHowManyCorrect(guess));
+		assertEquals(2, game.checkHowManyRightPlace(guess));
 	}
 	
 	@Test
@@ -107,7 +107,8 @@ public class Tests {
 		rand.setNums(nums);
 		game.createArray("medium");
 		int[] guess={7, 4, 3, 1};
-		assertEquals(2, game.howManyWrongPlace(guess));
+		assertEquals(2, game.checkHowManyWrongPlace(guess));
+		assertEquals(1, game.checkHowManyRightPlace(guess));
 	}
 	
 	@Test
@@ -118,7 +119,8 @@ public class Tests {
 		rand.setNums(nums);
 		game.createArray("medium");
 		int[] guess={7, 4, 8, 3};
-		assertEquals(1, game.howManyWrongPlace(guess));
+		assertEquals(2, game.checkHowManyWrongPlace(guess));
+		assertEquals(0, game.checkHowManyRightPlace(guess));
 	}
 	
 	@Test
@@ -129,7 +131,44 @@ public class Tests {
 		rand.setNums(nums);
 		game.createArray("medium");
 		int[] guess={7, 1, 3, 1};
-		assertEquals(2, game.howManyWrongPlace(guess)); //return 2 or 1?
+		assertEquals(1, game.checkHowManyWrongPlace(guess));
+		assertEquals(1, game.checkHowManyRightPlace(guess));
+	}
+	
+	@Test
+	public void HowManyWrongPlaceWithSomeRightNumRightPlaceAndSomeWrongPlaceReturnsCorrectAnswer()
+	{
+		rand.initializeArray(4);		
+		int[] nums={1, 2, 3, 4};
+		rand.setNums(nums);
+		game.createArray("medium");
+		int[] guess={1, 3, 5, 1};
+		assertEquals(1, game.checkHowManyWrongPlace(guess));
+		assertEquals(1, game.checkHowManyRightPlace(guess));
+	}
+	
+	@Test
+	public void HowManyWrongPlaceWithSameNumInRightPlaceAndWrongPlace()
+	{
+		rand.initializeArray(4);		
+		int[] nums={3, 2, 3, 4};
+		rand.setNums(nums);
+		game.createArray("medium");
+		int[] guess={7, 6, 3, 3}; //add comment
+		assertEquals(1, game.checkHowManyWrongPlace(guess));
+		assertEquals(1, game.checkHowManyRightPlace(guess));
+	}
+	
+	@Test
+	public void HowManyWrongPlace()
+	{
+		rand.initializeArray(3);
+		int[] nums={1, 7, 7};
+		rand.setNums(nums);
+		game.createArray("easy");
+		int[] guess={1, 7, 9};
+		assertEquals(2, game.checkHowManyRightPlace(guess));
+		assertEquals(0, game.checkHowManyWrongPlace(guess));	
 	}
 }
 	
