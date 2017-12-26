@@ -166,7 +166,6 @@ public class MasterMind
 		 	guessField[t].setToolTipText("Enter guess here");
 		}
 			
-		final JPanel panel=new JPanel();
 		final JComponent[] inputs = new JComponent[1+(levelLength*2)]; 
 		inputs[0] = new JLabel("Enter a guess from 1-9 into each slot:");
 			
@@ -178,7 +177,11 @@ public class MasterMind
 			r++;
 		}
 	
-		JOptionPane.showConfirmDialog(null, inputs, "MasterMind", JOptionPane.PLAIN_MESSAGE);
+		int choice=JOptionPane.showConfirmDialog(null, inputs, "MasterMind", JOptionPane.OK_CANCEL_OPTION);
+		if(choice==JOptionPane.CANCEL_OPTION || choice==JOptionPane.CLOSED_OPTION)
+		{
+			System.exit(0);
+		}
 
 		try {
 			return textFieldToString(guessField, levelLength);
