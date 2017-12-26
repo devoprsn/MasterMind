@@ -1,6 +1,8 @@
 package game;
 import javax.swing.*;
 import javax.sound.sampled.*;
+
+import java.awt.GridLayout;
 import java.io.*;
 import java.util.ArrayList;
 
@@ -9,13 +11,15 @@ public class MasterMind
 	//so we can pass in a mock object to test the arrays
 	private IRandomValueGenerator rand;
 	private int[] answer;
-	private ArrayList<StringBuilder> guesses;
+	private PreviousGuesses guesses;
+	private JPanel mainPanel;
 	
 	//constructor; initialize the ArrayList to hold Strings of previous guesses
 	public MasterMind(IRandomValueGenerator rand)
 	{
 		this.rand=rand;
-		guesses = new ArrayList<StringBuilder>();
+		guesses = new PreviousGuesses();
+		mainPanel = new JPanel(new GridLayout(10, 4, 2, 2));
 	}
 
 	//***//***//The methods are presented below in the order that they are used://***//***//
@@ -29,19 +33,20 @@ public class MasterMind
 		{
 			String level=gameLevel();
 			createArray(level);
-				boolean win=false;
-				int tries=0;
+			
+			boolean win=false;
+			int tries=0;
 			while(!win && tries<=10)
 			{
+				Integer[] guessInt=getUserInput(level, tries);
 				tries++;
-				int[] guessInt=getUserInput(level);
 				win=checkGuess(guessInt);
 				result(win, guessInt);
 			}
 			
 			if(tries==11)
 			{
-//				playAudio("game-over");
+				playAudio("sad_trombone.wav");
 				JOptionPane.showMessageDialog(null, "Game over");
 			}
 			x=JOptionPane.showConfirmDialog(null, "Would you like to play again?", "MasterMind", JOptionPane.YES_OPTION);
@@ -98,15 +103,15 @@ public class MasterMind
 	}
 	
 	//gets the user input and converts the String returned to an array
-	protected int[] getUserInput(String level)
+	protected Integer[] getUserInput(String level, int numberTry)
 	{
-		int[] guess=null;
+		Integer[] guess=null;
 		String guessString=null;
 		boolean validGuess=false;
 		
 		do{		
 			try {
-				guessString=createTextFieldAndGetUserGuess(level); //calls the text-field method that is the right size
+				guessString=createTextFieldAndGetUserGuess(level, numberTry); //calls the text-field method that is the right size
 													//for that level, returns user's guess
 				guess=stringToIntArr(guessString);	//copy the users' guess into an array to be able to
 													//compare it to the answer
@@ -120,12 +125,11 @@ public class MasterMind
 			
 		}while(!validGuess);
 		
-		guesses.add(new StringBuilder(guessString));
 		return guess;
 	}
 	
 	//call the text-field method that is the right size for that level, returns user's guess
-	protected String createTextFieldAndGetUserGuess(String level)
+	protected String createTextFieldAndGetUserGuess(String level, int numberTry)
 	{
 		String guessString=null;
 		
@@ -133,13 +137,13 @@ public class MasterMind
 			switch(level)
 			{
 				case "easy":
-					guessString=threeSpaces();	
+					guessString=createJComponent(3, numberTry);	
 					break;
 				case "medium":
-					guessString=fourSpaces();
+					guessString=createJComponent(4, numberTry);
 					break;
 				case "hard":
-					guessString=fiveSpaces();
+					guessString=createJComponent(5, numberTry);
 					break;
 			}
 		}
@@ -151,100 +155,40 @@ public class MasterMind
 		return guessString;
 	}
 	
-	//create a JTextField[] with three spaces for user entry
-	private String threeSpaces() 
+	//create a JComponent for user entry
+	private String createJComponent(int levelLength, int numberTry) 
 	{
-		int len=3;
-		JTextField[] guessField=new JTextField[len];
-		
+		JTextField[] guessField=new JTextField[levelLength];
+			
 		for (int t = 0; t<guessField.length; t++) 
 		{
 		 	guessField[t] = new JTextField();
 		 	guessField[t].setToolTipText("Enter guess here");
 		}
-		
-		final JComponent[] inputs = new JComponent[] { 
-				new JLabel("Previous Guesses:"),
-				new JLabel(guesses.toString()),
-				new JLabel("Enter a guess from 1-9 into each slot: \n"),
-				new JLabel("#1:"), guessField[0],
-				new JLabel("#2:"), guessField[1],
-				new JLabel("#3:"), guessField[2],
-		};
-		
+			
+		final JPanel panel=new JPanel();
+		final JComponent[] inputs = new JComponent[1+(levelLength*2)]; 
+		inputs[0] = new JLabel("Enter a guess from 1-9 into each slot:");
+			
+		int r=0;		
+		for(int q=1; q<inputs.length;q+=2)
+		{
+			inputs[q] = (new JLabel("#"+(r+1)+":"));
+			inputs[q+1] = guessField[r];
+			r++;
+		}
+	
 		JOptionPane.showConfirmDialog(null, inputs, "MasterMind", JOptionPane.PLAIN_MESSAGE);
 
 		try {
-			return textFieldToString(guessField, len);
+			return textFieldToString(guessField, levelLength);
 		}
 		catch(InvalidEntryException i)
 		{
 			throw new InvalidEntryException();
 		}
 	} 
-	
-	//create a JTextField[] with four spaces for user entry
-	private String fourSpaces()
-	{
-		int len=4;
-		JTextField[] guessField=new JTextField[len];
 		
-		for (int t = 0; t<guessField.length; t++) 
-		{
-		 	guessField[t] = new JTextField();
-		 	guessField[t].setToolTipText("Enter guess here");
-		}
-		
-		final JComponent[] inputs = new JComponent[] {
-				new JLabel("Enter a guess from 1-9 into each slot: \n"),
-				new JLabel ("#1:"), guessField[0],
-				new JLabel ("#2:"), guessField[1],
-				new JLabel ("#3:"), guessField[2],
-				new JLabel ("#4:"), guessField[3],
-		};
-
-		JOptionPane.showConfirmDialog(null, inputs, "MasterMind", JOptionPane.PLAIN_MESSAGE);
-		try {
-			return textFieldToString(guessField, len);
-		}
-		catch(InvalidEntryException i)
-		{
-			throw new InvalidEntryException();
-		}
-	}
-	
-	//create a JTextField[] with five spaces for user entry
-	private String fiveSpaces()
-	{
-		int len=5;
-		JTextField[] guessField=new JTextField[len];
-		
-		for (int t = 0; t<guessField.length; t++) 
-		{
-		 	guessField[t] = new JTextField();
-		 	guessField[t].setToolTipText("Enter guess here");
-		}
-		final JComponent[] inputs = new JComponent[] {
-				new JLabel("Enter a guess from 1-9 into each slot: \n"),
-				new JLabel ("#1:"), guessField[0],
-				new JLabel ("#2:"), guessField[1],
-				new JLabel ("#3:"), guessField[2],
-				new JLabel ("#4:"), guessField[3],
-				new JLabel ("#5:"), guessField[4],
-		};
-		
-		
-		
-		JOptionPane.showConfirmDialog(null, inputs, "MasterMind", JOptionPane.PLAIN_MESSAGE);
-		try {
-			return textFieldToString(guessField, len);
-		}
-		catch(InvalidEntryException i)
-		{
-			throw new InvalidEntryException();
-		}
-	}
-	
 	//convert the JTextField to a String in order to be able to use it and test it
 	private String textFieldToString(JTextField[] field, int len) 
 	{
@@ -262,13 +206,13 @@ public class MasterMind
 	}
 	
 	//converts the String to an array to be able to compare it to the answer
-	protected int[] stringToIntArr(String guessString)
+	protected Integer[] stringToIntArr(String guessString)
 	{
 		if(guessString.length()==0)
 		{
 			throw new InvalidEntryException();
 		}
-		int[] guessInt=new int[guessString.length()];
+		Integer[] guessInt=new Integer[guessString.length()];
 		
 		for (int y=0; y<guessInt.length; y++)
 		{
@@ -297,7 +241,7 @@ public class MasterMind
 	}
 	
 	//check if the guess is 100% correct
-	protected boolean checkGuess(int[] guessInt)
+	protected boolean checkGuess(Integer[] guessInt)
 	{
 		for(int i=0; i<guessInt.length; i++)
 		{
@@ -311,36 +255,35 @@ public class MasterMind
 	}
 	
 	//call displayWin() if user won and displayLoss() if didn't get it all right yet
-	protected void result(boolean win, int[] guessInt) throws IOException, LineUnavailableException
+	protected void result(boolean win, Integer[] guessInt) throws IOException, LineUnavailableException
 	{				
 		if(win)
 		{
-			displayWin();
+			displayWin(guessInt);
 		}
 		else
 		{
-			displayLoss(checkHowManyRightPlace(guessInt), checkHowManyWrongPlace(guessInt));
+			displayLoss(guessInt, checkHowManyRightPlace(guessInt), checkHowManyWrongPlace(guessInt));
 			
 		}
 	}
 
 	//call playAudio() and display "You Win!" message
-	private void displayWin() throws IOException, LineUnavailableException
+	private void displayWin(Integer[] guessInt) throws IOException, LineUnavailableException
 	{
 		playAudio("correct-answer.wav");
+		String[] thisGuessReply = {"RnRp: "+guessInt.length, "RnWp: 0"};
+		guesses.addRow(guessInt, mainPanel, thisGuessReply);
 		JOptionPane.showConfirmDialog(null, "You Win!", "MasterMind", JOptionPane.PLAIN_MESSAGE);		
 	}
 	
 	//display how many were Right-num-Right-place and how many were Right-num-Wrong-place, call playAudio()
-	private void displayLoss(int correct, int wrongPlace) throws IOException, LineUnavailableException
-	{		
-		StringBuilder msg=new StringBuilder("Right Number Right Place: "+correct
-				+"\nRight Number Wrong Place: "+wrongPlace);
-		guesses.get(guesses.size()-1).append(msg.toString());
-		playAudio("pling.wav");
-		JOptionPane.showMessageDialog(null, msg, "MasterMind", JOptionPane.PLAIN_MESSAGE);
-		
-	}
+		private void displayLoss(Integer[] guessInt, int correct, int wrongPlace) throws IOException, LineUnavailableException
+		{		
+			String[] thisGuessReply = {"RnRp: "+correct, "RnWp: "+wrongPlace};
+			guesses.addRow(guessInt, mainPanel, thisGuessReply);
+			playAudio("pling.wav");		
+		}
 	
 	//to play the audio for a win or a loss
 	private void playAudio(String filename) throws IOException, LineUnavailableException
@@ -394,7 +337,7 @@ public class MasterMind
 	}
 		
 	//check how many are: Right number, Right place
-	protected int checkHowManyRightPlace(int[] guessInt)
+	protected int checkHowManyRightPlace(Integer[] guessInt)
 	{
 		int total=0;	
 		for(int i=0; i<guessInt.length; i++)
@@ -409,7 +352,7 @@ public class MasterMind
 	}
 	
 	//check how many are: Right number, Wrong place
-	protected int checkHowManyWrongPlace(int[] guessInt)
+	protected int checkHowManyWrongPlace(Integer[] guessInt)
     {
 		int[] copyAns = new int[answer.length];
 		int[] copyGuess = new int[guessInt.length];

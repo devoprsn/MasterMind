@@ -41,16 +41,17 @@ public class Tests {
 	public void correctGuessReturnsTrue()
 	{ 
 		int[] nums={1,2,3};
+		Integer[] guess={1,2,3};
 		rand.setNums(nums);
 		game.createArray("easy");
-		assertTrue(game.checkGuess(nums));
+		assertTrue(game.checkGuess(guess));
 	}
 	
 	@Test
 	public void IncorrectGuessReturnsFalse()
 	{
 		int[] nums={1,2,3};
-		int[] guess={3,2,1};
+		Integer[] guess={3,2,1};
 		rand.setNums(nums);
 		game.createArray("easy");
 		assertFalse(game.checkGuess(guess));
@@ -59,8 +60,8 @@ public class Tests {
 	@Test
 	public void ValidGuessStringReturnsIntArrayRepresentation()
 	{
-		int[] nums={1, 2, 3, 4};
-		int[] returnedArray=game.stringToIntArr("1234");
+		Integer[] nums={1, 2, 3, 4};
+		Integer[] returnedArray=game.stringToIntArr("1234");
 		for(int i=0; i<nums.length; i++)
 		{
 			assertEquals(nums[i], returnedArray[i]);
@@ -71,8 +72,9 @@ public class Tests {
 	public void checkGuessReturnsTrueIfGuessEqualsAnswer()
 	{
 		rand.initializeArray(4);		
-		int[] guess={1, 2, 3, 4};
-		rand.setNums(guess);
+		int[] nums={1, 2, 3, 4};
+		Integer[] guess={1,2,3};
+		rand.setNums(nums);
 		game.createArray("medium");
 		assertTrue(game.checkGuess(guess));		
 	}
@@ -84,7 +86,7 @@ public class Tests {
 		int[] nums={1, 2, 3, 4};
 		rand.setNums(nums);
 		game.createArray("medium");
-		int[] guess={6, 7, 8, 9};
+		Integer[] guess={6, 7, 8, 9};
 		assertFalse(game.checkGuess(guess));
 	}
 	
@@ -95,7 +97,7 @@ public class Tests {
 		int[] nums={1, 2, 3, 4};
 		rand.setNums(nums);
 		game.createArray("medium");
-		int[] guess={1, 7, 3, 9};
+		Integer[] guess={1, 7, 3, 9};
 		assertEquals(2, game.checkHowManyRightPlace(guess));
 	}
 	
@@ -106,7 +108,7 @@ public class Tests {
 		int[] nums={1, 2, 3, 4};
 		rand.setNums(nums);
 		game.createArray("medium");
-		int[] guess={7, 4, 3, 1};
+		Integer[] guess={7, 4, 3, 1};
 		assertEquals(2, game.checkHowManyWrongPlace(guess));
 		assertEquals(1, game.checkHowManyRightPlace(guess));
 	}
@@ -118,7 +120,7 @@ public class Tests {
 		int[] nums={3, 2, 3, 4};
 		rand.setNums(nums);
 		game.createArray("medium");
-		int[] guess={7, 4, 8, 3};
+		Integer[] guess={7, 4, 8, 3};
 		assertEquals(2, game.checkHowManyWrongPlace(guess));
 		assertEquals(0, game.checkHowManyRightPlace(guess));
 	}
@@ -130,7 +132,7 @@ public class Tests {
 		int[] nums={1, 2, 3, 4};
 		rand.setNums(nums);
 		game.createArray("medium");
-		int[] guess={7, 1, 3, 1};
+		Integer[] guess={7, 1, 3, 1};
 		assertEquals(1, game.checkHowManyWrongPlace(guess));
 		assertEquals(1, game.checkHowManyRightPlace(guess));
 	}
@@ -142,7 +144,7 @@ public class Tests {
 		int[] nums={1, 2, 3, 4};
 		rand.setNums(nums);
 		game.createArray("medium");
-		int[] guess={1, 3, 5, 1};
+		Integer[] guess={1, 3, 5, 1};
 		assertEquals(1, game.checkHowManyWrongPlace(guess));
 		assertEquals(1, game.checkHowManyRightPlace(guess));
 	}
@@ -154,7 +156,7 @@ public class Tests {
 		int[] nums={3, 2, 3, 4};
 		rand.setNums(nums);
 		game.createArray("medium");
-		int[] guess={7, 6, 3, 3}; //add comment
+		Integer[] guess={7, 6, 3, 3}; //add comment
 		assertEquals(1, game.checkHowManyWrongPlace(guess));
 		assertEquals(1, game.checkHowManyRightPlace(guess));
 	}
@@ -166,7 +168,7 @@ public class Tests {
 		int[] nums={1, 7, 7};
 		rand.setNums(nums);
 		game.createArray("easy");
-		int[] guess={1, 7, 9};
+		Integer[] guess={1, 7, 9};
 		assertEquals(2, game.checkHowManyRightPlace(guess));
 		assertEquals(0, game.checkHowManyWrongPlace(guess));	
 	}
