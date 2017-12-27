@@ -1,5 +1,5 @@
 package game;
 
 public interface IRandomValueGenerator {
-	int[] generateRandomArray(int length);
+	Integer[] generateRandomArray(int length);
 }

@@ -2,7 +2,7 @@ package game;
 
 public class MockRandom implements IRandomValueGenerator{
 	
-	private int[] nums;
+	private Integer[] nums;
 
 	
 	public MockRandom()
@@ -11,16 +11,16 @@ public class MockRandom implements IRandomValueGenerator{
 
 	public void initializeArray(int length)
 	{
-		nums=new int[length];
+		nums=new Integer[length];
 	}
 	
-	public int[] generateRandomArray(int length)
+	public Integer[] generateRandomArray(int length)
 	{		
 		return nums;
 	}
 	
-	public void setNums(int[] nums)
+	public void setNums(Integer[] nums2)
 	{
-		this.nums=nums;
+		this.nums=nums2;
 	}
 }

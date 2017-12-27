@@ -1,14 +1,29 @@
 package game;
 
-import java.awt.*;
-import javax.swing.*;
+import java.awt.Color;
+import java.awt.GridLayout;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
 
 public class PreviousGuesses extends JFrame{
 
 	public PreviousGuesses(){
 		
-		super("Previous Guesses\n (RcRp = Right color Right place; RcWp = Right color Wrong place):");
-
+		super("Previous Guesses\n (RnRp = Right number Right place; RnWp = Right number Wrong place):");
+	}
+	
+	public JPanel displayEmptyBoard(int levelSize, JPanel mainPanel){
+		getContentPane().add(mainPanel);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setSize(levelSize*100+375, 700);
+        setVisible(true);
+        
+        return mainPanel;
+	}
+	
+	public void closeBoard(){
+		setVisible(false);
 	}
 	
 	public JPanel addRow(Integer[] guessInt, JPanel mainPanel, String[] thisGuessReply){
@@ -51,7 +66,7 @@ public class PreviousGuesses extends JFrame{
 		
 		getContentPane().add(mainPanel);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(colors.length*100+350, 700);
+        setSize(colors.length*100+375, 700);
         setVisible(true);
         
         return mainPanel;

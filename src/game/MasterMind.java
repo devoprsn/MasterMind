@@ -10,16 +10,14 @@ public class MasterMind
 {
 	//so we can pass in a mock object to test the arrays
 	private IRandomValueGenerator rand;
-	private int[] answer;
+	private Integer[] answer;
 	private PreviousGuesses guesses;
 	private JPanel mainPanel;
 	
 	//constructor; initialize the ArrayList to hold Strings of previous guesses
 	public MasterMind(IRandomValueGenerator rand)
 	{
-		this.rand=rand;
-		guesses = new PreviousGuesses();
-		mainPanel = new JPanel(new GridLayout(10, 4, 2, 2));
+		this.rand=rand;	
 	}
 
 	//***//***//The methods are presented below in the order that they are used://***//***//
@@ -28,29 +26,37 @@ public class MasterMind
 	//play method that calls all methods in order so main does not have to
 	public void play() throws IOException, LineUnavailableException
 	{
-		int x;
+		int choice;
 		do
 		{
+			guesses = new PreviousGuesses();
+			mainPanel = new JPanel(new GridLayout(10, 4, 2, 2));
 			String level=gameLevel();
-			createArray(level);
+			int levelLength = getLengthOfLevel(level);
+			createArray(levelLength);
 			
 			boolean win=false;
 			int tries=0;
-			while(!win && tries<=10)
+			guesses.displayEmptyBoard(levelLength, mainPanel);
+			while(!win && tries<10)
 			{
-				Integer[] guessInt=getUserInput(level, tries);
+				Integer[] guessInt=getUserInput(level);
 				tries++;
 				win=checkGuess(guessInt);
 				result(win, guessInt);
 			}
 			
-			if(tries==11)
+			if(tries==10)
 			{
 				playAudio("sad_trombone.wav");
 				JOptionPane.showMessageDialog(null, "Game over");
 			}
-			x=JOptionPane.showConfirmDialog(null, "Would you like to play again?", "MasterMind", JOptionPane.YES_OPTION);
-		}while(x==0);
+			choice=JOptionPane.showConfirmDialog(null, "Would you like to play again?", "MasterMind", JOptionPane.YES_NO_OPTION);
+			if (choice==JOptionPane.YES_OPTION)
+			{
+				guesses.closeBoard();
+			}
+		}while(choice==JOptionPane.YES_OPTION);
 			
 	}
 	
@@ -81,9 +87,7 @@ public class MasterMind
 		return group.getSelection().getActionCommand();
 	}	
 	
-	//call generateRandomArray() with length based on level
-	protected int[] createArray(String level)
-	{
+	protected int getLengthOfLevel(String level){
 		int length;
 		if(level=="easy")
 		{
@@ -97,13 +101,18 @@ public class MasterMind
 		{
 			length=5;
 		}
-		
-		answer=rand.generateRandomArray(length);
+		return length;
+	}
+	
+	//call generateRandomArray() with length based on level
+	protected Integer[] createArray(int levelLength)
+	{
+		answer=rand.generateRandomArray(levelLength);
 		return answer;
 	}
 	
 	//gets the user input and converts the String returned to an array
-	protected Integer[] getUserInput(String level, int numberTry)
+	protected Integer[] getUserInput(String level)
 	{
 		Integer[] guess=null;
 		String guessString=null;
@@ -111,7 +120,7 @@ public class MasterMind
 		
 		do{		
 			try {
-				guessString=createTextFieldAndGetUserGuess(level, numberTry); //calls the text-field method that is the right size
+				guessString=createTextFieldAndGetUserGuess(level); //calls the text-field method that is the right size
 													//for that level, returns user's guess
 				guess=stringToIntArr(guessString);	//copy the users' guess into an array to be able to
 													//compare it to the answer
@@ -129,7 +138,7 @@ public class MasterMind
 	}
 	
 	//call the text-field method that is the right size for that level, returns user's guess
-	protected String createTextFieldAndGetUserGuess(String level, int numberTry)
+	protected String createTextFieldAndGetUserGuess(String level)
 	{
 		String guessString=null;
 		
@@ -137,13 +146,13 @@ public class MasterMind
 			switch(level)
 			{
 				case "easy":
-					guessString=createJComponent(3, numberTry);	
+					guessString=createJComponent(3);	
 					break;
 				case "medium":
-					guessString=createJComponent(4, numberTry);
+					guessString=createJComponent(4);
 					break;
 				case "hard":
-					guessString=createJComponent(5, numberTry);
+					guessString=createJComponent(5);
 					break;
 			}
 		}
@@ -156,7 +165,7 @@ public class MasterMind
 	}
 	
 	//create a JComponent for user entry
-	private String createJComponent(int levelLength, int numberTry) 
+	private String createJComponent(int levelLength) 
 	{
 		JTextField[] guessField=new JTextField[levelLength];
 			
@@ -167,7 +176,7 @@ public class MasterMind
 		}
 			
 		final JComponent[] inputs = new JComponent[1+(levelLength*2)]; 
-		inputs[0] = new JLabel("Enter a guess from 1-9 into each slot:");
+		inputs[0] = new JLabel("Enter a guess from 1-7 into each slot:");
 			
 		int r=0;		
 		for(int q=1; q<inputs.length;q+=2)
@@ -178,8 +187,9 @@ public class MasterMind
 		}
 	
 		int choice=JOptionPane.showConfirmDialog(null, inputs, "MasterMind", JOptionPane.OK_CANCEL_OPTION);
-		if(choice==JOptionPane.CANCEL_OPTION || choice==JOptionPane.CLOSED_OPTION)
+		if(choice==JOptionPane.CANCEL_OPTION || choice==JOptionPane.CLOSED_OPTION) 
 		{
+			//if dialog box is closed or cancel is pressed, game ends
 			System.exit(0);
 		}
 
@@ -201,7 +211,7 @@ public class MasterMind
 			s+=field[i].getText();
 		}
 	
-		if(s.length()!=len)
+		if(s.length()!=len) //tests length of string to make sure its the right length
 		{
 			throw new InvalidEntryException();
 		}
@@ -234,7 +244,7 @@ public class MasterMind
 				throw new InvalidEntryException();
 			}
 
-			if(guessInt[y]<1)
+			if(guessInt[y]<1 || guessInt[y]>7) //only allows integers 1-7
 			{
 				throw new InvalidEntryException();
 			}

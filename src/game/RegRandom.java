@@ -10,12 +10,12 @@ public class RegRandom implements IRandomValueGenerator{
 		rand=new Random();
 	}
 		
-	public int[] generateRandomArray(int length)
+	public Integer[] generateRandomArray(int length)
 	{
-		int[] nums=new int[length];
+		Integer[] nums=new Integer[length];
 		for(int i=0; i<length; i++)
 		{
-			nums[i]=rand.nextInt(8)+1;
+			nums[i]=rand.nextInt(7)+1;
 		}
 		
 		return nums;

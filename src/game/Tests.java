@@ -11,7 +11,7 @@ public class Tests {
 	public void GameLevelEasyCreatesArrayLengthThree()
 	{
 		rand.initializeArray(3);
-		int[] nums=game.createArray("easy");
+		Integer[] nums=game.createArray(3);
 		assertEquals(3, nums.length);
 	}
 	
@@ -19,7 +19,7 @@ public class Tests {
 	public void GameLevelMediumCreatesArrayLengthFour()
 	{
 		rand.initializeArray(4);
-		int[] nums=game.createArray("medium");
+		Integer[] nums=game.createArray(4);
 		assertEquals(4, nums.length);
 	}
 	
@@ -27,7 +27,7 @@ public class Tests {
 	public void GameLevelHardCreatesArrayLengthFive()
 	{
 		rand.initializeArray(5);
-		int[] nums=game.createArray("hard");
+		Integer[] nums=game.createArray(5);
 		assertEquals(5, nums.length);
 	}
 	
@@ -40,20 +40,20 @@ public class Tests {
 	@Test
 	public void correctGuessReturnsTrue()
 	{ 
-		int[] nums={1,2,3};
+		Integer[] nums={1,2,3};
 		Integer[] guess={1,2,3};
 		rand.setNums(nums);
-		game.createArray("easy");
+		game.createArray(3);
 		assertTrue(game.checkGuess(guess));
 	}
 	
 	@Test
 	public void IncorrectGuessReturnsFalse()
 	{
-		int[] nums={1,2,3};
+		Integer[] nums={1,2,3};
 		Integer[] guess={3,2,1};
 		rand.setNums(nums);
-		game.createArray("easy");
+		game.createArray(3);
 		assertFalse(game.checkGuess(guess));
 	}	
 	
@@ -72,10 +72,10 @@ public class Tests {
 	public void checkGuessReturnsTrueIfGuessEqualsAnswer()
 	{
 		rand.initializeArray(4);		
-		int[] nums={1, 2, 3, 4};
+		Integer[] nums={1, 2, 3, 4};
 		Integer[] guess={1,2,3};
 		rand.setNums(nums);
-		game.createArray("medium");
+		game.createArray(4);
 		assertTrue(game.checkGuess(guess));		
 	}
 	
@@ -83,9 +83,9 @@ public class Tests {
 	public void checkGuessReturnsFalseIfGuessDoesNotEqualsAnswer()
 	{
 		rand.initializeArray(4);		
-		int[] nums={1, 2, 3, 4};
+		Integer[] nums={1, 2, 3, 4};
 		rand.setNums(nums);
-		game.createArray("medium");
+		game.createArray(4);
 		Integer[] guess={6, 7, 8, 9};
 		assertFalse(game.checkGuess(guess));
 	}
@@ -94,9 +94,9 @@ public class Tests {
 	public void checkHowManyCorrectReturnsCorrectAnswer()
 	{
 		rand.initializeArray(4);		
-		int[] nums={1, 2, 3, 4};
+		Integer[] nums={1, 2, 3, 4};
 		rand.setNums(nums);
-		game.createArray("medium");
+		game.createArray(4);
 		Integer[] guess={1, 7, 3, 9};
 		assertEquals(2, game.checkHowManyRightPlace(guess));
 	}
@@ -105,9 +105,9 @@ public class Tests {
 	public void HowManyWrongPlaceReturnsCorrectAnswer()
 	{
 		rand.initializeArray(4);		
-		int[] nums={1, 2, 3, 4};
+		Integer[] nums={1, 2, 3, 4};
 		rand.setNums(nums);
-		game.createArray("medium");
+		game.createArray(4);
 		Integer[] guess={7, 4, 3, 1};
 		assertEquals(2, game.checkHowManyWrongPlace(guess));
 		assertEquals(1, game.checkHowManyRightPlace(guess));
@@ -117,9 +117,9 @@ public class Tests {
 	public void HowManyWrongPlaceWithMultiplesInAnswerReturnsCorrectAnswer()
 	{
 		rand.initializeArray(4);		
-		int[] nums={3, 2, 3, 4};
+		Integer[] nums={3, 2, 3, 4};
 		rand.setNums(nums);
-		game.createArray("medium");
+		game.createArray(4);
 		Integer[] guess={7, 4, 8, 3};
 		assertEquals(2, game.checkHowManyWrongPlace(guess));
 		assertEquals(0, game.checkHowManyRightPlace(guess));
@@ -129,9 +129,9 @@ public class Tests {
 	public void HowManyWrongPlaceWithMultiplesInGuessReturnsCorrectAnswer()
 	{
 		rand.initializeArray(4);		
-		int[] nums={1, 2, 3, 4};
+		Integer[] nums={1, 2, 3, 4};
 		rand.setNums(nums);
-		game.createArray("medium");
+		game.createArray(4);
 		Integer[] guess={7, 1, 3, 1};
 		assertEquals(1, game.checkHowManyWrongPlace(guess));
 		assertEquals(1, game.checkHowManyRightPlace(guess));
@@ -141,9 +141,9 @@ public class Tests {
 	public void HowManyWrongPlaceWithSomeRightNumRightPlaceAndSomeWrongPlaceReturnsCorrectAnswer()
 	{
 		rand.initializeArray(4);		
-		int[] nums={1, 2, 3, 4};
+		Integer[] nums={1, 2, 3, 4};
 		rand.setNums(nums);
-		game.createArray("medium");
+		game.createArray(4);
 		Integer[] guess={1, 3, 5, 1};
 		assertEquals(1, game.checkHowManyWrongPlace(guess));
 		assertEquals(1, game.checkHowManyRightPlace(guess));
@@ -153,9 +153,9 @@ public class Tests {
 	public void HowManyWrongPlaceWithSameNumInRightPlaceAndWrongPlace()
 	{
 		rand.initializeArray(4);		
-		int[] nums={3, 2, 3, 4};
+		Integer[] nums={3, 2, 3, 4};
 		rand.setNums(nums);
-		game.createArray("medium");
+		game.createArray(4);
 		Integer[] guess={7, 6, 3, 3}; //add comment
 		assertEquals(1, game.checkHowManyWrongPlace(guess));
 		assertEquals(1, game.checkHowManyRightPlace(guess));
@@ -165,12 +165,23 @@ public class Tests {
 	public void HowManyWrongPlace()
 	{
 		rand.initializeArray(3);
-		int[] nums={1, 7, 7};
+		Integer[] nums={1, 7, 7};
 		rand.setNums(nums);
-		game.createArray("easy");
+		game.createArray(3);
 		Integer[] guess={1, 7, 9};
 		assertEquals(2, game.checkHowManyRightPlace(guess));
 		assertEquals(0, game.checkHowManyWrongPlace(guess));	
-	}
+	}	
+	 
+    @Test
+    public void HowManyRightPlaceWithAllSameNumInGuessReturnsCorrectAnswer()
+    {
+        rand.initializeArray(4);        
+        Integer[] nums={3, 2, 3, 4};
+        rand.setNums(nums);
+        game.createArray(4);
+        Integer[] guess={3, 3, 3, 3};
+        assertEquals(2, game.checkHowManyRightPlace(guess));
+    }
 }
 	
