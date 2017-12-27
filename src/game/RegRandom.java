@@ -15,7 +15,7 @@ public class RegRandom implements IRandomValueGenerator{
 		int[] nums=new int[length];
 		for(int i=0; i<length; i++)
 		{
-			nums[i]=rand.nextInt(8)+1;
+			nums[i]=rand.nextInt(9)+1;
 		}
 		
 		return nums;
