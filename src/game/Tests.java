@@ -31,6 +31,14 @@ public class Tests {
 		assertEquals(5, nums.length);
 	}
 	
+	@Test
+    public void getLengthOfLevelReturnsCorrectAnswer()
+    {
+        assertEquals(3, game.getLengthOfLevel("easy"));
+        assertEquals(4, game.getLengthOfLevel("medium"));
+        assertEquals(5, game.getLengthOfLevel("hard"));   
+    }
+	
 	@Test (expected=InvalidEntryException.class)
 	public void InvalidGuessCharacterThrowsException()
 	{
@@ -150,7 +158,7 @@ public class Tests {
 	}
 	
 	@Test
-	public void HowManyWrongPlaceWithSameNumInRightPlaceAndWrongPlace()
+	public void HowManyWrongPlaceWithDuplicateNumberBeforeRightNumRightPlace()
 	{
 		rand.initializeArray(4);		
 		Integer[] nums={3, 2, 3, 4};
@@ -162,7 +170,7 @@ public class Tests {
 	}
 	
 	@Test
-	public void HowManyWrongPlace()
+	public void HowManyWrongPlaceWithDuplicateNumberAfterRightNumRightPlace()
 	{
 		rand.initializeArray(3);
 		Integer[] nums={1, 7, 7};
