@@ -82,7 +82,11 @@ public class MasterMind
 			buttons.add(medium);
 			buttons.add(hard);
 			
-		JOptionPane.showConfirmDialog(null, buttons, "MasterMind", JOptionPane.PLAIN_MESSAGE);
+		int cancel=JOptionPane.showConfirmDialog(null, buttons, "MasterMind", JOptionPane.PLAIN_MESSAGE);
+		if(cancel==JOptionPane.CLOSED_OPTION)
+		{
+			System.exit(0);
+		}
 					
 		return group.getSelection().getActionCommand();
 	}	
